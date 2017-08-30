@@ -1,0 +1,36 @@
+#!/usr/bin/python
+cost = 0
+while cost == 0 :
+    price = raw_input("How much does it cost?")
+    if not price:
+        print "Thank you it is free, cool!"
+        break
+    try:
+        cost = float(price)
+    except ValueError:
+        print "Please give a dollar amount."
+else:
+
+     try:
+         cost = int(price)
+     except ValueError:
+        print "Please give a dollar amount."
+
+print "How about $%.2f " % (float(price)/2)
+
+
+
+while True: 
+    height = raw_input("How tall are you?)
+    try:
+        number = int(height)
+    except ValueError:
+        print height "is not a number! Please try again."
+else:
+    try:
+        cost = float(answer)
+        print height, ' is not a number! Please try again.'
+
+print 
+                   
+                   

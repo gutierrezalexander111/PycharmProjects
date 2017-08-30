@@ -1,0 +1,14 @@
+#!/usr/bin/python
+
+import math
+
+
+def DoBreakfast(meat=bacon,eggs= "over easy", potatoes = hashbrowns, toast = white, beverage = coffee):
+    print "Here is your %s and %s eggs with %s and %s toast" % meat, % eggs, % potatoes, % toast, % beverage
+    print "Can I bring you more %s beverage
+
+main()
+
+                         
+
+        

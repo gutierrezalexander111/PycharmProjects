@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import math
+
+def Totalcost(price, Taxrate = .0825):
+    total = sum((price, Taxrate))
+    return total
+
+
+def main ():
+    while True:
+        price = raw_input("Enter sales price")
+        try:
+            number = float(price)
+        except ValueError:
+            print "That is not a price try again"
+        else:
+            print Totalcost(number)
+            print Totalcost(number,.09)
+
+main()
+
+                         
+
+        

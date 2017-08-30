@@ -1,0 +1,126 @@
+
+#!/usr/bin/python
+
+
+from __future__ import print_function
+
+
+import dns.resolver
+import re
+import yaml
+import sys
+import threading
+import Queue
+import logging
+
+
+def mapResolverNameserver(resolver):
+    return resolver.nameserver
+
+
+class dnsQueryWorker(threading.Thread):
+    def __init__(self, inputQueue, outputQueue):
+        threading.Thread.__init__(self)
+        self.setDaemon(True)
+        self.inputQueue = inputQueue
+        self.outputQueue = outputQueue
+
+
+    def run(self):
+        count = 0
+        logging.debug('dnsQueryWorker ' + self.name + ' Started')
+        try:
+            while not self.inputQueue.empty():
+                count += 1
+                input = self.inputQueue.get(False)
+                resolver = input[0]
+                qname = input[1]
+                rdtype = input[2]
+                logging.debug('dnsQueryWorker ' + self.name + ' Looking up '
+                              + qname + ' on ' + resolver.nameserver)
+                answer = resolver.getIpFromDns(qname)
+                self.outputQueue.put((resolver.nameserver, qname, answer))
+        except Queue.Empty:
+            pass
+        logging.debug('dnsQueryWorker ' + self.name + ' Stopping after '
+                      + str(count) + ' lookup(s)')
+        return
+
+
+class resolverWrapper(object):
+    def __init__(self, nameserver):
+        self.nameserver = nameserver
+        # Needed to handle NXDOMAIN NS Servers (i.e. gtm-sd.intuit.com.)
+        try:
+            self.nameserverIp = map(str,
+                                    dns.resolver.query(self.nameserver,'A'))[0]
+        except dns.resolver.NXDOMAIN:
+            self.nameserverIp = None
+            self.nameserver = None 
+            return
+        self.nameserver = re.sub('\.$', '', self.nameserver)
+        self._resolver = dns.resolver.Resolver()
+        self._resolver.nameservers = [self.nameserverIp]
+        self._resolver.lifetime = 5.0 # Limit how long we spend trying to get IP
+
+
+    def query(self, qname, rdtype=1, rdclass=1, tcp=False, source=None,
+              raise_on_no_answer=True, source_port=0):
+        try:
+            answers = map(str, self._resolver.query(qname, rdtype, rdclass, tcp,
+                                                    source, raise_on_no_answer,
+                                                    source_port))
+        except dns.resolver.NXDOMAIN:
+            logging.error("Got NXDOMAIN for query name: " + qname + " type: "
+                          + rdtype + " from " + self.nameserver + " ("
+                          + self.nameserverIp + ")")
+            answers = ["NXDOMAIN"]
+        except dns.resolver.NoAnswer:
+            logging.error("Got NoAnswer for query name: " + qname + " type: "
+                          + rdtype + " from " + self.nameserver + " ("
+                          + self.nameserverIp + ")")
+            answers = ["No Answer"]
+        except dns.resolver.NoNameservers:
+            logging.error("Got Refused for query name: " + qname + " type: "
+                          + rdtype + " from " + self.nameserver + " ("
+                          + self.nameserverIp + ")")
+            answers = ["Refused"]
+        except dns.resolver.Timeout:
+            logging.error("Timeout for query name: " + qname + " type: "
+                          + rdtype + " from " + self.nameserver + " ("
+                          + self.nameserverIp + ")")
+            answers = ["Timeout"]
+        return answers
+
+
+    def getIpsFromDns(self, qname):
+        return self.query(qname, 'A')
+
+
+    def getIpFromDns(self, qname, resolver=None):
+        answers = self.getIpsFromDns(qname)
+        if len(answers) > 1:
+            logging.error("Warning: getIpFromDns(" + qname
+                          + ") got multiple IPs [" + ", ".join(ips) + "]")
+        return answers[0]
+
+
+    def getCnameFromDns(self, qname):
+        answers = self.query(qname, 'CNAME')
+        if len(answers) > 1:
+            logging.error("Got multiple CNAMEs for " + qname)
+        return answers[0]
+
+
+def getResolvers(domain):
+    resolvers = []
+    nameservers = map(str, dns.resolver.query(domain, 'NS'))
+    for nameserver in nameservers:
+        newResolver = resolverWrapper(nameserver)
+        # Needed to handle NXDOMAIN NS Servers (i.e. gtm-sd.intuit.com.)
+        if newResolver.nameserver != None:
+            resolvers.append(newResolver)
+    return resolvers
+
+
+ 

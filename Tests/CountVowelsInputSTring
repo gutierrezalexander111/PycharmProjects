@@ -1,0 +1,8 @@
+#!/usr/bin/python
+
+def main():
+    import CountVowels
+    my_string = raw_input('Please type in a sentence')
+    answer = CountVowels.CountVowels(my_string)
+    print answer
+main()
