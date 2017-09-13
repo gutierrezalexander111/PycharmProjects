@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+"""Demonstrates input."""
+
+NUMBER_OF_WEEKS_IN_A_WORK_YEAR = 52
+NUMBER_OF_WORK_HOURS_IN_A_WEEK = 40
+HOURS_WORKED_IN_A_YEAR = 1920
+
+def CalculateAnnualWage(hourly_rate=15.5, hours_worked=(NUMBER_OF_WEEKS_IN_A_WORK_YEAR * NUMBER_OF_WORK_HOURS_IN_A_WEEK)):
+    return hourly_rate * hours_worked
+
+def CalculateRetirement(money_needed_to_retire=100000,yearly_salary=20000):
+    return money_needed_to_retire / yearly_salary
+
+def GetDreamJobInfo(prompt):
+    while True:
+        said = raw_input(prompt)
+        if not said:
+            Test(said)
+            continue
+        try: said = str(said)
+        except ValueError:
+            print said, "this is not a job description try again"
+
+def Test():
+    job = GetDreamJobInfo()
+    if job:
+        print job, 'is your dream job'
+    elif not job:
+        GetDreamJobInfo()
+    job = GetDreamJob('Please enter your desired hourly rate')
+    if job:
+        print job, 'is your dream job'
+    elif not job:
+        return None
+    job = GetDreamJob('Please enter your idea of a dream job')
+    if job:
+        print job, 'is your dream job'
+    elif not job:
+        return None
+
+    job = GetDreamJob('Please enter your idea of a dream job')
+    if job:
+        print job, 'is your dream job'
+    elif not job:
+        return None
+
+
+
+def Test():
+    job = GetDreamJob('Please enter your idea of a dream job')
+    if job:
+        print job, 'is your dream job'
+    elif not job:
+        return None
+
+def GetJobInfo(dream_job, hourly_wage=10, money_needed_to_retire=10000, hours_worked_in_year=2000):
+
+    while True: # True/False are keywords.
+        dream_job = raw_input('What is your dream job? ')
+        try:
+            dream_job = str(dream_job)
+        except ValueError:
+            print dream_job, 'is not a job description ! Please try again.', Test()
+        hourly_wage = raw_input('What is your desired hourly rate ? ')
+        try:
+            hourly_wage = float(hourly_wage)
+            return None
+        money_needed_to_retire = raw_input('How much money do you need to retire? ')
+        if not money_needed_to_retire:
+            return None
+        hours_worked_in_year = raw_input('How many hours do you work in a year? ') #This was for teesting logic
+        if not hours_worked_in_year:
+            return None
+
+        try:
+            hourly_wage = float(hourly_wage)
+        except ValueError:
+            print hourly_wage, 'is not a wage ! Please try again.'
+        try:
+            money_needed_to_retire = float(money_needed_to_retire)
+        except ValueError:
+            print money_needed_to_retire, 'is not a dollar amount ! Please try again.'
+        try:
+            hours_worked_in_year = float(hours_worked_in_year)
+        except ValueError:
+            print hours_worked_in_year, 'is not hours ! Please try again.'
+        else:
+            break
+    print "Your dream job is %s!" % (dream_job) # string formatting is
+    print "Your desired hourly wage is %.2f" % (hourly_wage)
+    print "If you get 4 weeks vacation then your annual wage is $ %.2f " % (CalculateAnnualWage(hourly_wage,hours_worked_in_year))
+    print "You will need %.2f years of savings to retire" % (CalculateRetirement(money_needed_to_retire,(CalculateAnnualWage(hourly_wage,hours_worked_in_year))))
+
+def main():
+    Test()
+    GetJobInfo('boss')
+    CalculateRetirement()
+    CalculateAnnualWage()
+if __name__ == '__main__':
+    main()
