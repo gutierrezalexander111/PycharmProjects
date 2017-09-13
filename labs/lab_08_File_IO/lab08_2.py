@@ -5,6 +5,7 @@ Write a function that takes a file name and counts
 how many times each word appears in the file.
 """
 import sys
+sys.path.insert(0,"/Users/dgutierrez/ExerciseProjects/PythonLabs/labs/Lab_06_Comprehensions")
 import lab06_5 as count_vowels
 
 def CountVowelsInFile(file_name):
