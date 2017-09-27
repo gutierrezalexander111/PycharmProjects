@@ -14,7 +14,9 @@ def Rollem():
                "Box cars!")
 
     dice = random.randrange(1, 7), random.randrange(1, 7)
+    print dice
     answer = "%d and %d" % dice
+    print answer
     answer += "= %d " % sum(dice)
     if dice[0] == dice[1]:
         answer += DOUBLES[dice[0]]

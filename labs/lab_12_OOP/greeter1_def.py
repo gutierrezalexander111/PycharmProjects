@@ -11,8 +11,8 @@ class Greeter:
         print 'Hello World'  # argument of every method in 
                              # every class.
 def main():                  # 
-    fred = Greeter()         # A call:  fred.Greet() is 
-    print 'fred.Greet():'    # interpreted as 
+    fred = Greeter()         # A call:  fred.Greet() is
+    print 'fred.Greet():'    # interpreted as
     fred.Greet()             # Greeter.Greet(fred). So the
     alma = Greeter()         # greeter object labeled 
     print 'alma.Greet():'    # 'fred' is the namespace we 

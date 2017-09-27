@@ -37,7 +37,7 @@ def GetJobInfo():
         except ValueError:
             print money_needed_to_retire, 'this is not a dollar amount please try again! :'
             continue
-        hours_worked_in_year = raw_input('how many hours do you work in a year')
+        hours_worked_in_year = raw_input('how many hours do you work in a year: ')
         try:
             hours_worked_in_year = float(hours_worked_in_year)
         except ValueError:
