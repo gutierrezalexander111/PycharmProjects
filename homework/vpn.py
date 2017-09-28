@@ -1,6 +1,7 @@
 #Daniel Gutierrez - 09.27.2017
 import keyring
 import subprocess
+import os
 
 # setup these variables
 #VPNGROUP = ''  # The VPN group you are trying to connect to (numerical)
@@ -11,29 +12,39 @@ OPTION1 = '-s'
 OPTION2 = 'connect'
 HOST = 'vpn.coursehero.com' #The hostname or IP of the VPN device you are trying to connect to
 
-def GetUserName():
-    while True:
-        said = raw_input('Enter your username : ')
-        try:
-            said = str(said)
-        except ValueError:
-            print said, "this not a username try again"
-            return
-        break
+def GetUsernameAuto():
+    os.getlogin()
+    return
 
-def ReturnUserName():
-    username = GetUserName()
+#def GetUserName():
+#    while True:
+#        said = raw_input('Enter your username : ')
+#        try:
+#            said = str(said)
+#        except ValueError:
+#            print said, "this not a username try again"
+#            return
+#        break
+#def ReturnUserName():
+#    username = GetUserName()
 
-
+def StartVPN():
 # Set value for subprocess stdin to read password
-password = keyring.get_password(SYSNAME,GetUserName()).encode('ascii')
-
+#password = keyring.get_password(SYSNAME,GetUserName()).encode('ascii')
+    password = keyring.get_password(SYSNAME,GetUsernameAuto()).encode('ascii')
 #subproces for vpn command with stdin stdout pipes
-cmdline = [COMMAND, OPTION1, OPTION2, HOST]
-cmd = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-cmd.stdin.write('1\n\n')
-print cmd.stdin.write(str('%s\n' % password))
-cmd.stdin.write('PUSH\n\n')
+    cmdline = [COMMAND, OPTION1, OPTION2, HOST]
+    cmd = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    cmd.stdin.write('1\n\n')
+    print cmd.stdin.write(str('%s\n' % password))
+    cmd.stdin.write('PUSH\n\n')
 #send output to stdout to stdin
-for line in iter(cmd.stdout.readline,""):
-    print line
+    for line in iter(cmd.stdout.readline,""):
+        print line
+
+def main():
+    StartVPN()
+
+# call main()
+if __name__ == '__main__':
+    main()
